@@ -7,7 +7,7 @@ library(randomForest)
 
 # Read in the RF model
 model <- readRDS("model.rds")
-model
+golf <- readRDS("Golf.rds")
 
 ui <- fluidPage(
     
@@ -44,7 +44,7 @@ ui <- fluidPage(
                                            ),
                                            
                                            mainPanel(
-                                             tags$label(h3('Status/Output0')), # Status/Output Text Box
+                                             tags$label(h3('Status/Output')), # Status/Output Text Box
                                              verbatimTextOutput('contents0'),
                                              tableOutput('tabledata0') # Prediction results table
                                              
@@ -54,7 +54,38 @@ ui <- fluidPage(
                                          
                                          ),
                                 tabPanel("Mtcars",icon = icon("glyphicon glyphicon-align-center",lib = "glyphicon")),
-                                tabPanel("Survival",icon = icon("glyphicon glyphicon-fire",lib = "glyphicon")),
+                                tabPanel("Play Golf",icon = icon("glyphicon glyphicon-fire",lib = "glyphicon"),
+                                         
+                                         headerPanel('Play Golf?'),
+                                         
+                                         # Input values
+                                         sidebarPanel(
+                                           HTML("<h3>Input parameters</h3>"),
+                                           
+                                           selectInput("outlook", label = "Outlook:", 
+                                                       choices = list("Sunny" = "sunny", "Overcast" = "overcast", "Rainy" = "rainy"), 
+                                                       selected = "Rainy"),
+                                           sliderInput("temperature", "Temperature:",
+                                                       min = 64, max = 86,
+                                                       value = 70),
+                                           sliderInput("humidity", "Humidity:",
+                                                       min = 65, max = 96,
+                                                       value = 90),
+                                           selectInput("windy", label = "Windy:", 
+                                                       choices = list("Yes" = "TRUE", "No" = "FALSE"), 
+                                                       selected = "TRUE"),
+                                           
+                                           actionButton("submitbutton1", "Submit", class = "btn btn-primary")
+                                         ),
+                                         
+                                         mainPanel(
+                                           tags$label(h3('Status/Output')), # Status/Output Text Box
+                                           verbatimTextOutput('contents1'),
+                                           tableOutput('tabledata1') # Prediction results table
+                                           
+                                         )
+                                         
+                                         ),
                                 tabPanel("BMI", icon = icon("
 glyphicon glyphicon-scale",lib = "glyphicon"),br(),br(),
                                          sidebarPanel(
@@ -159,6 +190,53 @@ server <- function(input, output, session) {
     } 
   })
   
+  
+###################
+  
+  datasetInput1 <- reactive({  
+    
+    # outlook,temperature,humidity,windy,play
+    df0 <- data.frame(
+      Name = c("outlook",
+               "temperature",
+               "humidity",
+               "windy"),
+      Value = as.character(c(input$outlook,
+                             input$temperature,
+                             input$humidity,
+                             input$windy)),
+      stringsAsFactors = FALSE)
+    
+    play <- "play"
+    df0 <- rbind(df0, play)
+    input0 <- transpose(df0)
+    write.table(input0,"Golfinput.csv", sep=",", quote = FALSE, row.names = FALSE, col.names = FALSE)
+    
+    test0 <- read.csv(paste("Golfinput", ".csv", sep=""), header = TRUE)
+    
+    test0$outlook <- factor(test0$outlook, levels = c("overcast", "rainy", "sunny"))
+    
+    
+    Output <- data.frame(Prediction=predict(golf,test0), round(predict(golf,test0,type="prob"), 3))
+    print(Output)
+    
+  })
+  
+  # Status/Output Text Box
+  output$contents1 <- renderPrint({
+    if (input$submitbutton1>0) { 
+      isolate("Calculation complete.") 
+    } else {
+      return("Server is ready for calculation.")
+    }
+  })
+  
+  # Prediction results table
+  output$tabledata1 <- renderTable({
+    if (input$submitbutton1>0) { 
+      isolate(datasetInput1()) 
+    } 
+  })
   
   
   
