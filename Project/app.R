@@ -7,7 +7,10 @@ library(dplyr)
 library(data.table)
 library(randomForest)
 
-
+source("setBackgroundImage.R")
+source("BlackCarbon.r")
+source("IrisModel.r")
+source("GolfModel.r")
 source("BlackCarbon.r")
 ##
 
@@ -22,7 +25,7 @@ model <- readRDS("model.rds")
 golf <- readRDS("Golf.rds")
 
 ui <- fluidPage(
-    
+    titlePanel("Hello"),
     navbarPage(title = div("web",img(src="web.png", height = '27px', width = '27px'),"APP"), collapsible = TRUE, inverse = FALSE, theme = shinytheme("cosmo"),
                tabPanel("Home", icon = icon("glyphicon glyphicon-home", lib = "glyphicon"),
                         tagList(
@@ -167,7 +170,7 @@ glyphicon glyphicon-scale",lib = "glyphicon"),br(),br(),
                                            tableOutput('tabledata') # Results table
                                          ) 
                                          ),
-                                tabPanel(" BCC - Visualisation",icon = icon("glyphicon glyphicon-pencil",lib = "glyphicon"),br(),
+                                tabPanel(" BCC - Visualisation",icon = icon("glyphicon glyphicon-pencil",lib = "glyphicon"),
                                          
                                          fluidPage(
                                            

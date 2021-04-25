@@ -2,7 +2,7 @@ library(randomForest)
 library(caret)
 library(RCurl)
 # Importing the Iris data set
-iris <- read.csv("iris.csv")
+iris <- read.csv("Iris.csv")
 
 # Performs stratified random split of the data set
 TrainingIndex <- createDataPartition(iris$Species, p=0.8, list = FALSE)
