@@ -25,7 +25,7 @@ model <- readRDS("model.rds")
 golf <- readRDS("Golf.rds")
 
 ui <- fluidPage(
-    titlePanel("Hello"),
+  tags$head(HTML("<title>webAPP</title>")),
     navbarPage(title = div("web",img(src="web.png", height = '27px', width = '27px'),"APP"), collapsible = TRUE, inverse = FALSE, theme = shinytheme("cosmo"),
                tabPanel("Home", icon = icon("glyphicon glyphicon-home", lib = "glyphicon"),
                         tagList(
